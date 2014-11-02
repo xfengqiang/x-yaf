@@ -11,20 +11,20 @@ class Aj_AccountController extends  Abstract_Controller_Aj{
         $password = $this->getPost('str', true, 'password');
         $vcode = $this->getPost('str', true, 'vcode');
         
-        if(Comm_App::hasLogin()){
-            $this->redirect('/');
-        }
+//        if(Comm_App::hasLogin()){
+//            $this->redirect('/');
+//        }
         
         if(!Comm_Util_VerifyCode::isValid($vcode)){
-            $this->error(0, '验证码不正确');
+            $this->error(-1, '验证码不正确');
         }
         
         if($name == 'frank' && $password=='z'){
             $session = Yaf_Session::getInstance();
-            $session->offsetSet('username', 'frank');    
-            $this->redirect('/');
+            $session->offsetSet('username', 'frank');
+            $this->result(0, "OK");
         }else{
-            $this->error('用户名或密码错误');
+            $this->error(-1, '用户名或密码错误');
         }
     }
     

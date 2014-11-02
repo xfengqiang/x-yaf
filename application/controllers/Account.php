@@ -7,6 +7,9 @@
  */
 class AccountController extends Abstract_Controller_Base {
     public function loginAction(){
+        if(Comm_App::hasLogin()){
+            $this->redirect('/');    
+        }
     }
     public function logoutAction(){
         Yaf_Session::getInstance()->del('username');

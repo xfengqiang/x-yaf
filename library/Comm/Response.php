@@ -49,13 +49,12 @@ abstract class Comm_Response {
      * @param type $return
      * @return boolean
      */
-    static public function json($code, $msg, $data = null, $return = true) {
-        $result = json_encode(array('code' => $code, 'msg' => $msg, 'data' => $data), JSON_UNESCAPED_UNICODE);
+    static public function json($data, $return=false) {
+        $result = json_encode($data, JSON_UNESCAPED_UNICODE);
         if ($return) {
             return $result;
         } else {
             echo $result;
-            return true;
         }
     }
 

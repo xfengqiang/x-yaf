@@ -8,11 +8,19 @@
 
 class Helper_Tpl {
     static private  $VIEW_PATH = '';
+    static private $MODULE_NAME = '';
     
     static public function setViewPath($path){
         self::$VIEW_PATH = $path;
     }
 
+    static public function setModuel($module){
+        self::$MODULE_NAME = strtolower($module);
+    }
+    
+    static public function getModule(){
+        return self::$MODULE_NAME;
+    }
     /**
      * @return string
      */
@@ -75,7 +83,7 @@ class Helper_Tpl {
         foreach($pathes as $path){
             $src = self::getJsBaseUrl() . $path;
             $src .= (strpos($src, '?') === false ? '?' : '&') . "version={$ver}";
-            $result[] = "<js type=\"text/javascript\" src=\"{$src}\"></js>";
+            $result[] = "<script type=\"text/javascript\" src=\"{$src}\"></script>";
         }
 
         if ($return) {
@@ -93,11 +101,11 @@ class Helper_Tpl {
     }
     
     static public function getJsBaseUrl(){
-        return APPLICATION_PATH.'/public/rs/js/';
+        return '/rs_'.self::getModule().'/js/';
     }
     
     static public function getCssBaseUrl(){
-        return  APPLICATION_PATH.'/public/rs/css/';
+        return  '/rs_'.self::getModule().'/css/';
     }
     
     static public function jsVersion(){

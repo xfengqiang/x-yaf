@@ -11,7 +11,7 @@ class ErrorController extends Yaf_Controller_Abstract {
 	public function errorAction(Exception $exception) {
         $request_type = Yaf_Registry::get('request_type');
         if($request_type == 'aj'){
-            $result = array('errno'=>0, 'code'=>$exception->getCode(), 'msg'=>$exception->getMessage());
+            $result = array('errno'=>-1, 'code'=>$exception->getCode(), 'msg'=>$exception->getMessage());
             echo Helper_String::json($result);
         }else{
             $this->getView()->assign("exception", $exception);

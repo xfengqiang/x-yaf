@@ -17,6 +17,7 @@ class Abstract_Controller_Base extends Yaf_Controller_Abstract{
         }
         
         Helper_Tpl::setViewPath($view_path);
+        Helper_Tpl::setModuel($module_name);
     }
 
     public function getQuery($type, $is_needed, $name, $default=""){

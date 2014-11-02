@@ -10,6 +10,7 @@ class Abstract_Controller_Aj extends Abstract_Controller_Base{
     
     public function init(){
         parent::init();
+        Comm_Response::contentType(Comm_Response::TYPE_JSON);
         Yaf_Registry::set('request_type', 'aj');
         //禁止自动渲染模板
         Yaf_Dispatcher::getInstance()->autoRender(false)->disableView();
@@ -21,9 +22,9 @@ class Abstract_Controller_Aj extends Abstract_Controller_Base{
      * @param string $msg
      * @param mixed $data
      */
-    public function result($code, $msg='', $data = null) {
-        Comm_Response::contentType(Comm_Response::TYPE_JSON);
-        $this->getResponse()->setBody(Comm_Response::json($code, $msg, $data));
+    public function result($code, $data = array(), $msg='') {
+        $ret = array('errno'=>$code, 'data'=>$data, 'msg'=>$msg);
+        $this->getResponse()->setBody(Comm_Response::json($ret));
     }
     
     public function error($code, $msg=''){
