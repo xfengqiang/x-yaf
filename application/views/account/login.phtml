@@ -1,0 +1,17 @@
+<?php
+    Helper_Tpl::loadView('comm/header.phtml', array('title'=>'首页'));
+?>
+<div>
+<form id="form_login" method="post" action="/aj_account/login">
+    <div><strong>用户名:</strong><input type="text" name="username" placeholder="请输入用户名"/></div>
+    <div><strong>密码:</strong><input type="password" name="password" placeholder="请输入密码"/></div>
+    <div>
+        <strong>验证码:</strong><input type="text" name="vcode" placeholder="请输入密码"/>
+        <img src="/account/vcode"  width="75" height="20" />
+    </div>
+    <input type="submit" value="登录"/>
+</form>
+</div>
+<?php
+    Helper_Tpl::loadView('comm/footer.phtml', array('title'=>'首页'));
+?>
