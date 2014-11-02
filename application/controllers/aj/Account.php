@@ -1,7 +1,7 @@
 <?php
 /**
  * 
- * @package aj
+ * @package aj/Account
  * @Autor: fengqiang <fengqiang1@staff.sina.com.cn>
  * @Date: 2014-11-02 15:34
  */
