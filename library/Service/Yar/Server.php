@@ -8,7 +8,7 @@
 class Service_Yar_Server {
     
     public static function handle($api){
-        $model = Service_Yar_Model::create($api);
+        $model = Service_Yar_ModelBase::create($api);
         $service = new Yar_Server($model);
         $service->handle();
     }

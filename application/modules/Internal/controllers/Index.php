@@ -33,13 +33,30 @@ class IndexController extends Yaf_Controller_Abstract {
         var_dump($retval, $callinfo);
         return true;
     }
-    public function testYarAction(){
+    public function disableView(){
         $dispatcher = Yaf_Dispatcher::getInstance();
         $dispatcher->autoRender(false);
         $dispatcher->disableView();
-        
-        Yar_Concurrent_Client::call("http://i.yar.xyaf.me/api/index", "getHotTopic", ['page'=>1,'count'=>10], array($this, 'yarCallback'));
-        Yar_Concurrent_Client::loop(); //send
     }
-   
+    public function testYarAction(){
+        $this->disableView();
+        Yar_Concurrent_Client::call("http://i.yar.xyaf.me/api/index?api=Demo", "getHotTopic", ['page'=>1,'count'=>10], array($this, 'yarCallback'));
+        Yar_Concurrent_Client::loop(null, null); //send
+        echo "OK";
+    }
+    public function testYarClientAction(){
+
+        $this->disableView();
+        
+        $yar_client = new Service_Yar_Client();
+        $yar_client->call('Demo', 'getFuns', [123456], function($ret){
+            var_dump($ret);
+        });
+        
+        $yar_client->call('Demo', 'getHotTopic', ['page'=>1,'count'=>10], function($ret){
+            var_dump($ret);
+        });
+
+        $yar_client->loop();
+    }
 }
