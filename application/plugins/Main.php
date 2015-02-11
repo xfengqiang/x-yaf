@@ -16,16 +16,21 @@ class MainPlugin extends Yaf_Plugin_Abstract {
 
     public function dispatchLoopStartup(Yaf_Request_Abstract $request, Yaf_Response_Abstract $response) {
         $http_host = $request->getServer('HTTP_HOST', '');
-        $access_moduel = (strpos($http_host, 'i.')===0) ? 'Internal' : 'Index';
-        if($access_moduel == 'Internal'){
+
+        $access_moduel = 'Index';
+        if((strpos($http_host, 'i.yar')===0)){
+            $access_moduel = 'Yar';
+            $request->setModuleName($access_moduel);
+        }else if(strpos($http_host, 'i.')===0){
+            $access_moduel = 'Internal';
             $request->setModuleName($access_moduel);
         }
+
         
         $module_name = $request->getModuleName();
         if($access_moduel != $module_name){
             throw new Yaf_Exception("Forbidden!!");
         }
-        
     }
 
     public function preDispatch(Yaf_Request_Abstract $request, Yaf_Response_Abstract $response) {

@@ -28,4 +28,18 @@ class IndexController extends Yaf_Controller_Abstract {
 		//4. render by Yaf, 如果这里返回FALSE, Yaf将不会调用自动视图引擎Render模板
         return TRUE;
 	}
+    
+    public function yarCallback($retval, $callinfo){
+        var_dump($retval, $callinfo);
+        return true;
+    }
+    public function testYarAction(){
+        $dispatcher = Yaf_Dispatcher::getInstance();
+        $dispatcher->autoRender(false);
+        $dispatcher->disableView();
+        
+        Yar_Concurrent_Client::call("http://i.yar.xyaf.me/api/index", "getHotTopic", ['page'=>1,'count'=>10], array($this, 'yarCallback'));
+        Yar_Concurrent_Client::loop(); //send
+    }
+   
 }
