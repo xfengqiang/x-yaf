@@ -1,0 +1,8 @@
+<?php
+if(isset($page_js)){
+    array_unshift($page_js, '3rd/jquery.1.5.1.js');
+    Helper_Tpl::loadJs($page_js);
+}
+?>
+</body>
+</html>
