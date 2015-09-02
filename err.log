@@ -1,0 +1,2 @@
+SELECT * FROM `user_model` WHERE  WHERE `id` = ? [isMaster:]
+[0;31;31m31[0m
