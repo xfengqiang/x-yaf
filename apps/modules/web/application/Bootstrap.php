@@ -10,7 +10,7 @@
 
 use Common\Config;
 
-class Bootstrap extends apps\common\Bootstrap{
+class Bootstrap extends \Yaf_Bootstrap_Abstract{
    
 	public function _initPlugin(Yaf_Dispatcher $dispatcher) {
 		//注册一个插件
@@ -20,7 +20,7 @@ class Bootstrap extends apps\common\Bootstrap{
 
 	public function _initRoute(Yaf_Dispatcher $dispatcher) {
 		//在这里注册自己的路由协议,默认使用简单路由
-        $config = Config::getAppConfig('router.routers');
+        $config = Config::getAppConfig('router', 'routers');
         $dispatcher->getRouter()->addConfig($config);
 	}
 	

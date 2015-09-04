@@ -46,8 +46,6 @@ class Tool {
      * @return boolean
      */
     public static function isPrivateIp($ip) {
-        //TODO
-        return false;
         $ip_value = self::ip2long($ip);
         return ($ip_value & 0xFF000000) === 0x0A000000 ||         //10.0.0.0-10.255.255.255
         ($ip_value & 0xFFF00000) === 0xAC100000 ||         //172.16.0.0-172.31.255.255
@@ -228,7 +226,8 @@ class Tool {
 
     /**
      * 判断一个给定的UA是否为主流的搜索引擎 http://www.useragentstring.com/pages/Crawlerlist/
-     * @param $ua user agent
+     *
+     * @param \Common\Util\user|string $ua user agent
      * @return bool
      */
     static  function isSpiderUA($ua='') {
@@ -244,5 +243,41 @@ class Tool {
             }
         }
         return false;
+    }
+
+    static function getLocalIp() {
+        $sys = 	php_uname("s");
+        if (substr($sys, 0, 3) == 'WIN') {
+            $preg = "/\A((([0-9]?[0-9])|(1[0-9]{2})|(2[0-4][0-9])|(25[0-5]))\.){3}(([0-9]?[0-9])|(1[0-9]{2})|(2[0-4][0-9])|(25[0-5]))\Z/";
+            //获取操作系统为win2000/xp、win7的本机IP真实地址  
+            self::execCmd("ipconfig");
+            if (!empty($out)) {
+                foreach ($out AS $row) {
+                    if (strstr($row, "IP") && strstr($row, ":") && !strstr($row, "IPv6")) {
+                        $tmpIp = explode(":", $row);
+                        if (preg_match($preg, trim($tmpIp[1]))) {
+                            return trim($tmpIp[1]);
+                        }
+                    }
+                }
+            }
+        }else if (substr($sys, 6)=='Darwin') { //max os
+            //获取操作系统为linux类型的本机IP真实地址  
+            $out = self::execCmd("ifconfig|grep inet|grep -v 'inet6\\|127' | awk '{print $2}'");
+            if (!empty($out)) {
+                return $out[0];
+            }
+        }else{
+            $out = self::execCmd("ifconfig|grep inet|grep -v 'inet6\\|127' | awk '{print $2}' | awk -F: '{print $2}' | grep -v '^$'");
+            if (!empty($out)) {
+                return $out[0];
+            }
+        }
+
+        return '127.0.0.1';
+    }
+    
+    public static function execCmd($cmd) {
+        return shell_exec($cmd);
     }
 }

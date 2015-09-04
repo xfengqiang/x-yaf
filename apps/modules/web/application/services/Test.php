@@ -13,7 +13,6 @@ use \Common\Mysql\Dao;
 use \Common\Mysql\Query;
 use \Common\Mysql\Db;
 use apps\common\models\User;
-use Common\Validator\Rule;
 
 class Test {
     public static function testDb() {

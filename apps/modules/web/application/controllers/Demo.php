@@ -22,7 +22,7 @@ class DemoController extends \Http\Controller\Web {
     }
     
     public function configAction(){
-        $ret = \Common\Config::getCommon('global.common.site');
+        $ret = \Common\Config::getAppConfig('app', 'common.site');
         echo json_encode($ret);
     }
 } 

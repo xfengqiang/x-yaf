@@ -1,9 +1,10 @@
 <?php
-define('ENV', "dev");
-define('MODULE_PATH', dirname(dirname(__FILE__)));
+define('MODULE_PATH', dirname(__DIR__));
 define('APPLICATION_PATH', realpath(MODULE_PATH.'/../../../'));
-require APPLICATION_PATH.'/apps/common/Bootstrap.php';
+require APPLICATION_PATH.'/apps/common/App.php';
+apps\common\App::init(MODULE_PATH);
 
-$config = apps\common\Bootstrap::getCommonConfig(ENV);
-$app = new Yaf_Application($config->toArray(), ENV);
+
+$config = \Common\Config::getAppConfig('app', ENV);
+$app = new Yaf_Application($config, ENV);
 $app->bootstrap(null)->getDispatcher()->dispatch(new \Yaf_Request_Simple());

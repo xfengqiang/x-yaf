@@ -23,6 +23,7 @@ class XAutoLoader {
         }
         else {
             $filePath = self::$appPath.'/library/'.str_replace('\\', '/', $class).'.php';
+//            echo "Find file:$filePath\n";
             if (file_exists($filePath) ){
                 require $filePath;
             }
