@@ -12,6 +12,19 @@ use Common\Config;
 
 class Bootstrap extends \Yaf_Bootstrap_Abstract{
    
+    public function _initConfig(Yaf_Dispatcher $dispatcher) {
+        \Http\View\Tpl::setViewPath(MODULE_PATH . '/application/views');
+        $env = \apps\common\App::getEnv();
+        if($env == 'dev') {
+            \Http\View\Tpl::setJsBase('/static/src/js/');
+            \Http\View\Tpl::setCssBase('/static/src/css/');
+        }else{
+            \Http\View\Tpl::setJsBase('/static/dist/js/');
+            \Http\View\Tpl::setCssBase('/static/dist/css/');
+            
+        }
+    }
+    
 	public function _initPlugin(Yaf_Dispatcher $dispatcher) {
 		//注册一个插件
 		$main_plugin = new MainPlugin();

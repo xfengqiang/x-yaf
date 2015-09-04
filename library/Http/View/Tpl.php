@@ -9,19 +9,29 @@ namespace Http\View;
 
 class Tpl {
     static private  $VIEW_PATH = '';
-    static private $MODULE_NAME = '';
+    
+    static private $JS_BASE = '/static/src/js/';
+    static private $CSS_BASE = '/static/src/css/';
+    
+    static function setJsBase($path) {
+        self::$JS_BASE = $path;
+    }
+    static function setCssBase($path) {
+        self::$CSS_BASE = $path;
+    }
+    static public function getJsBaseUrl(){
+        return self::$JS_BASE;
+    }
+
+    static public function getCssBaseUrl(){
+        return  self::$CSS_BASE;
+    }
+
     
     static public function setViewPath($path){
         self::$VIEW_PATH = $path;
     }
 
-    static public function setModuel($module){
-        self::$MODULE_NAME = strtolower($module);
-    }
-    
-    static public function getModule(){
-        return self::$MODULE_NAME;
-    }
     /**
      * @return string
      */
@@ -29,12 +39,12 @@ class Tpl {
         return self::$VIEW_PATH;
     }
     
-    static public function loadView($path, $_var=array()){
+    static public function loadView($path, $_var=array(), $viewObj=null){
         extract($_var, EXTR_SKIP);
+        extract(['view'=>$viewObj], EXTR_SKIP);
         $view_path = self::getViewPath().'/'.$path; 
         include $view_path;
     }
-
 
     /**
      * 加载CSS
@@ -59,9 +69,9 @@ class Tpl {
         }
         
         if($return){
-            return implode("\n", $result);
+            return implode("\r\n", $result);
         }else{
-            echo implode("\n", $result);
+            echo implode("\r\n", $result);
         }
     }
 
@@ -101,14 +111,7 @@ class Tpl {
         return $url;
     }
     
-    static public function getJsBaseUrl(){
-        return '/rs_'.self::getModule().'/js/';
-    }
-    
-    static public function getCssBaseUrl(){
-        return  '/rs_'.self::getModule().'/css/';
-    }
-    
+  
     static public function jsVersion(){
         return "";
     }

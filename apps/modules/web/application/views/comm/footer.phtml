@@ -1,7 +1,21 @@
+<script src="<?php echo \Http\View\Tpl::getJsBaseUrl();?>lib/seajs/1.3.1/sea.js"></script>
+<?php if(ENV=='dev'): ?>
+<script src="<?php echo \Http\View\Tpl::getJsBaseUrl();?>rootConfig.js"></script>
+<?php elseif($view->js_debug): ?>
+<script src="<?php echo \Http\View\Tpl::getJsBaseUrl();?>app/all-debug.js"></script>
+<?php else: ?>
+<script src="<?php echo \Http\View\Tpl::getJsBaseUrl();?>app/all.js"></script>
+<?php endif; ?>
+
 <?php
-if(isset($page_js)){
-    array_unshift($page_js, '3rd/jquery.1.5.1.js');
-    Helper_Tpl::loadJs($page_js);
+if(!empty($view->page_js)){
+    if (ENV == 'dev'){
+        echo "<script>seajs.use('{$view->page_js}');</script>\n";
+    }else if($view->js_debug) {
+        echo "<script>seajs.use('{$view->page_js}-debug');</script>\n";
+    }else{
+        echo "<script>seajs.use('{$view->page_js}');</script>\n";
+    }
 }
 ?>
 </body>

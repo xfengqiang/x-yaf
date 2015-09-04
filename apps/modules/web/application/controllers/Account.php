@@ -7,9 +7,6 @@
  */
 class AccountController extends \Http\Controller\Web {
     public function loginAction(){
-//        if(Comm_App::hasLogin()){
-//            $this->redirect('/');    
-//        }
     }
     public function detailAction(){
         $this->disableView();

@@ -21,8 +21,6 @@ class App  {
     static public function init($modulePath) {
         \XAutoLoader::RegisterAutoLoader(APPLICATION_PATH);
         \Common\Config::init( APPLICATION_PATH . '/apps/config', $modulePath.'/config', self::getEnv());
-        \Http\View\Tpl::setViewPath(MODULE_PATH . '/application/views');
-        
         Logger::init(APPLICATION_PATH.'/logs/'.basename($modulePath));
         define('ENV', self::getEnv());
     }
