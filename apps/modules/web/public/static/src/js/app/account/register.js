@@ -9,10 +9,10 @@ define(function (require, exports, module) {
     var ret = $('#register_form').validate({
         errorPlacement: function(error, element) {
             console.log('error~~~~~', element.name);
-            error.appendTo(element.parent("div"));
+            error.appendTo(element.parent("div").next("td"));
         },
         success: function(label) {
-            console.log('ok~~~~~', label.name);
+            console.log('error~~~~~', element.name);
             label.text("ok!").addClass("success");
         },
        rules : {

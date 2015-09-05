@@ -8,6 +8,12 @@
 <?php endif; ?>
 
 <?php
+
+if(!empty($view->js_config)){
+    $js_config = Common\String\Encode::json($view->js_config);
+    echo "<script>var js_config={$js_config}</script>\n";
+}
+
 if(!empty($view->page_js)){
     if (ENV == 'dev'){
         echo "<script>seajs.use('{$view->page_js}');</script>\n";
@@ -17,6 +23,8 @@ if(!empty($view->page_js)){
         echo "<script>seajs.use('{$view->page_js}');</script>\n";
     }
 }
+
+
 ?>
 </body>
 </html>

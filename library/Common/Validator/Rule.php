@@ -28,25 +28,26 @@ class Rule {
     const ERR_REGEX = 'regex';
     const ERR_ENUM = 'enum';
     const ERR_RANGE = 'range';
+    const ERR_RANGE_STR = 'range_str';
     const ERR_REQUIRED = 'required';
+
+    public $name = '';
+    public $title = '';
     
-    private $name = '';
-    private $title = '';
-    
-    private $type = null;
-    private $min = null;
-    private $max = null;
-    private $enumValues = null;
-    private $regex = null;
-    private $default = null;
-    private $trim = true;
-    private $required = false;
-    
-    private $errType = null;
-    private $strType = null;
-    private $errFormat = null;
-    
-    private $value = null;
+    public $type = null;
+    public $min = null;
+    public $max = null;
+    public $enumValues = null;
+    public $regex = null;
+    public $default = null;
+    public $trim = true;
+    public $required = false;
+
+    public $errType = null;
+    public $strType = null;
+    public $errFormat = null;
+
+    public $value = null;
 
     /**
      * @param      $type
@@ -115,6 +116,7 @@ class Rule {
      * @return $this
      */
     public function regex($regex){
+        $this->strType = 'regex';
         $this->regex = $regex;
         return $this;
     }
@@ -236,7 +238,7 @@ class Rule {
         
         if ($this->errType == self::ERR_MIN || $this->errType == self::ERR_MAX){
             if ($this->min!==null && $this->max!==null){
-                $this->errType = self::ERR_RANGE;
+                $this->errType = ($this->type=='str') ? self::ERR_RANGE_STR : self::ERR_RANGE;
             }    
         }
         
@@ -279,19 +281,16 @@ class Rule {
         return $this->errType;
     }
 
-    /**
-     * @return string
-     */
-    public function errMsg() {
-        if ($this->errType == self::ERR_NONE) {
+    public function errMsgForType($errType) {
+        if ($errType == self::ERR_NONE) {
             return  '';
-        } 
-        
-        $format = ($this->errFormat==null) ? RuleErrors::errFormats($this->errType) : $this->errFormat;
-        
+        }
+
+        $format = ($this->errFormat==null) ? RuleErrors::errFormats($errType) : $this->errFormat;
+
         $title = ($this->title==null)? $this->name : $this->title;
         $args = [$format, $title];
-        switch ($this->errType){
+        switch ($errType){
             case self::ERR_MIN:
             case self::ERR_MIN_LEN:
                 array_push($args, $this->min);
@@ -301,14 +300,21 @@ class Rule {
                 array_push($args, $this->max);
                 break;
             case self::ERR_RANGE:
+            case self::ERR_RANGE_STR:
                 array_push($args, $this->min, $this->max);
                 break;
             case self::ERR_REQUIRED:
             case self::ERR_REGEX:
             case self::ERR_ENUM:
                 break;
-        }    
-        
+        }
+
         return call_user_func_array('sprintf', $args);
+    }
+    /**
+     * @return string
+     */
+    public function errMsg() {
+        $this->errMsgForType($this->errType);
     }
 } 

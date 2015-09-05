@@ -22,6 +22,7 @@ abstract class RuleErrors {
             Rule::ERR_REQUIRED => '%s未填写',
             Rule::ERR_REGEX => '%s的格式填写不正确',
             Rule::ERR_RANGE => '%s需要在%s-%s之间',
+            Rule::ERR_RANGE_STR => '%s的长度需要在%s-%s之间',
         ];
         return isset($messages[$type]) ? $messages[$type] : '%s填写不正确';
     }

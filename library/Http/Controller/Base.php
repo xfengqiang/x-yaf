@@ -19,7 +19,7 @@ abstract class Base extends \Yaf_Controller_Abstract{
      * @param $name
      * @return \Common\Validator\Rule
      */
-    private function getRule($rules, $name){
+    private function getRules($rules, $name){
         $rule =  isset($rules[$name]) ? $rules[$name] : null;
         if ($rule){
             $rule->name($name);
@@ -38,29 +38,33 @@ abstract class Base extends \Yaf_Controller_Abstract{
         $r = $this->getRequest();
         $rules = $rules ? $rules->getRules() : [];
         foreach($required as $name) {
-            $rule = $this->getRule($rules, $name);
+            $rule = $this->getRules($rules, $name);
             $value = $r->get($name);
-            if ($rule) {
-                $err = $rule->required(true)->validate($value);
-                if ($err) {
-                    throw new \Exception($rule->errMsg(), Error::ERR_INVALID_PARAM);
-                }
-                $value = $rule->getValue();
-            }
+            $this->checkRules($value, $rule, true);
             $ret[$name] = $value;
         }
 
         foreach($optional as $name) {
-            $rule = $this->getRule($rules, $name);
-            
+            $rule = $this->getRules($rules, $name);
             $value = $r->get($name);
-            if ($rule) {
-                $rule->required(false)->validate($value);
-                $value = $rule->getValue();
-            }
+            $this->checkRules($value, $rule, false);
             $ret[$name] = $value;
         }
         return $ret;
+    }
+    
+    protected function checkRules(&$value, $rules, $required) {
+        if(!$rules) {
+            return true;
+        }
+        foreach($rules as $rule) {
+            $err = $rule->required($required)->validate($value);
+            if ($err && $required) {
+                throw new \Exception($rule->errMsg(), Error::ERR_INVALID_PARAM);
+            }
+            $value = $rule->getValue();
+        }
+        return true;
     }
 
     /**
