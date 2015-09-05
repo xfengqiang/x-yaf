@@ -102,8 +102,6 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-cssmin');
     grunt.loadNpmTasks('grunt-processhtml-prepend');
     
-    grunt.loadNpmTasks('grunt-process-tags');
-    
     grunt.registerMultiTask('htmlprocess', 'My asynchronous task.', function() {
         grunt.log.writeln('htmlprocess started');
         var path = require('path');

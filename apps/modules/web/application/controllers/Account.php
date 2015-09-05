@@ -8,6 +8,8 @@
 class AccountController extends \Http\Controller\Web {
     public function loginAction(){
     }
+    public function registerAction(){
+    }
     public function detailAction(){
         $this->disableView();
         $id = $this->requiredParams(['id']);
