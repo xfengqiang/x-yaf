@@ -84,6 +84,29 @@ abstract class Base extends \Yaf_Controller_Abstract{
     public function optionParams($params, RulesInterface $rules=null) {
         return $this->params([], $params, $rules);
     }
+
+    /**
+     * 获取js rule
+     * @param array          $params
+     * @param RulesInterface $ruleObj
+     * @return array
+     */
+    public function getRuleJs(array $params, RulesInterface $ruleObj) {
+        $config = ['rules'=>null, 'messages'=>null];
+        $rules = $ruleObj->getRules();
+        foreach($params as $name=>$required) {
+            $rs = isset($rules[$name]) ? $rules[$name] : null;
+            if (!$rs) {
+                continue;
+            }
+
+            foreach($rs as $rule) {
+                $rule->required($required)->getJsRule($config, $name);
+            }
+        }
+
+        return $config;
+    }
     
     public function disableView(){
         \Yaf_Dispatcher::getInstance()->autoRender(false)->disableView();

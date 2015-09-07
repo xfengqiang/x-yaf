@@ -7,7 +7,7 @@ define(function (require, exports, module) {
     console.log(js_config.rules);
     console.log(js_config.messages);
     
-    var ret = $('#register_form').validate({
+    var validator = $('#register_form').validate({
         errorPlacement: function(error, element) {
             console.log('error~~~~~', element.name);
             error.appendTo(element.parent("div"));
@@ -19,8 +19,14 @@ define(function (require, exports, module) {
        rules : js_config.rules,
        messages : js_config.messages
     });
+
+    console.log('this is ret:'+validator.valid());
+    if(validator.valid()) {
+        
+    }else{
+        
+    }
     
-    console.log('this is ret:'+ret);
 //    $("[action-type=register]").click(function(){
 //        console.log('this is submit action');
 //        return false;

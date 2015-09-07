@@ -1165,7 +1165,27 @@ $.extend( $.validator, {
 	},
 
 	methods: {
-
+        enum : function( value, element, param ) {
+            if(param === undefined) {
+                return true;
+            }
+            for(var i=0;i<param.length;i++){
+                if(param[i] == value) {
+                    return true;
+                }
+            }
+            return false;
+        }, 
+        regex : function( value, element, param ) {
+            if (!param) {
+                return true;
+            }
+            var reg = eval(param);
+            if(!reg) {
+                return true;
+            }
+            return reg.test(value);
+        },
 		// http://jqueryvalidation.org/required-method/
 		required: function( value, element, param ) {
 			// check if dependency is met
