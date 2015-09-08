@@ -23,6 +23,12 @@ class Cli extends Base{
     protected $sleepTime = 1; //如果是常驻任务，每次循环结束后，可以
     
     protected $configs;
+
+    /**
+     * @var \Common\Lock\Lock
+     */
+    protected $lock = null;
+    
     /**
      * @var Logger
      */
@@ -43,7 +49,7 @@ class Cli extends Base{
         $fileLogger = new File();
         $fileLogger->log_base_dir = APPLICATION_PATH.'/logs/cli';
         $fileLogger->log_file = $this->taskName.'.'.$this->taskId.'.log';
-        $fileLogger->log_level = Config::getAppConfig('app', ENV.'.logger.file.log_level');
+        $fileLogger->log_level = Config::getAppConfig('app', ENV.'.logger.file.log_level', 1);
         Logger::logger()->addLogger($fileLogger);
             
         $this->logger = Logger::logger();
@@ -52,18 +58,33 @@ class Cli extends Base{
             set_time_limit($this->timeLimit);
         }
         
-        
     }
     protected function getTaskConfig() {
         $r = $this->getRequest();
 
         $task_name = $r->getControllerName().'_'.$r->getActionName();
         $task_name = strtolower($task_name);
-        $config = Config::getAppConfig('crontab', $task_name);
+        $config = Config::getAppConfig('crontab', $task_name, '');
 
         $config['task_id'] = $r->getParam('task_id', 0);
         $config['task_name'] = $task_name;
         
         return $config;
+    }
+    
+    public function getLock() {
+        if(!$this->lock) {
+            \Common\Mysql\DbCache::RegisterDb('lockdb', ['host'=>'127.0.0.1', 'port'=>3600, 'dbname'=>'xwk', 'user'=>'root', 'password'=>'z']);
+            $db = new \Common\Mysql\Db('lockdb');
+            $lock = new \Common\Lock\DbLock($db);
+            $lock_key = $this->taskName;
+        }
+    }
+    public function lock() {
+        
+    }
+    
+    public function unlock(){
+        
     }
 } 

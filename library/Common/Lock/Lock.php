@@ -8,6 +8,6 @@
 namespace Common\Lock;
 
 interface Lock {
-    public function lock();
-    public function unlock();
+    public function lock($key);
+    public function unlock($key);
 } 

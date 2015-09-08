@@ -145,9 +145,11 @@ class Db {
         list($condition, $params) = $this->getCondition($condition);
         list($fields, $values) = Query::BuildInsertParams($data);
         $sql = "UPDATE `{$table}` SET {$fields}";
+        
         if (!empty($condition)) {
             $sql .= " WHERE {$condition}";
         }
+
         if ($params==null){
             $params = [];
         }
