@@ -1,4 +1,7 @@
 <?php
+use Common\Config;
+use Common\Logger\Logger;
+
 /**
  * @name Bootstrap
  * @author frank.xu
@@ -8,6 +11,16 @@
  * 调用的次序, 和申明的次序相同
  */
 class Bootstrap extends Yaf_Bootstrap_Abstract{
+    public function _initConfigs(Yaf_Dispatcher $dispatcher){
+        Logger::init(array(
+            'Console'=>array(
+                'log_level'=>Config::getAppConfig('app', ENV.'.logger.console.log_level'),
+            )
+        ));
+    }
+    public function _initModule(Yaf_Dispatcher $dispatcher) {
+            
+    }
 	public function _initPlugin(Yaf_Dispatcher $dispatcher) {
 		$main_plugin = new MainPlugin();
 		$dispatcher->registerPlugin($main_plugin);

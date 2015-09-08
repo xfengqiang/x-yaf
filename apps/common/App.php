@@ -21,12 +21,11 @@ class App  {
     static public function init($modulePath) {
         \XAutoLoader::RegisterAutoLoader(APPLICATION_PATH);
         \Common\Config::init( APPLICATION_PATH . '/apps/config', $modulePath.'/config', self::getEnv());
-        Logger::init(APPLICATION_PATH.'/logs/'.basename($modulePath));
         define('ENV', self::getEnv());
     }
     
     static public function finish(){
-        Logger::clearFileCache();
+        Logger::logger()->flush();
     }
     
     static public function getEnv (){

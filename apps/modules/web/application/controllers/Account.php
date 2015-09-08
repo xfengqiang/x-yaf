@@ -9,6 +9,7 @@ class AccountController extends \Http\Controller\Web {
     public function loginAction(){
     }
     public function registerAction(){
+        \Common\Logger\Logger::warn('hello');
     }
     public function detailAction(){
         $this->disableView();

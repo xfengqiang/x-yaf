@@ -3,7 +3,9 @@ define('MODULE_PATH', dirname(__DIR__));
 define('APPLICATION_PATH', realpath(MODULE_PATH.'/../../../'));
 require APPLICATION_PATH.'/apps/common/App.php';
 apps\common\App::init(MODULE_PATH);
-
+use Common\Logger\Console;
+use Common\Logger\File;
+use Common\Logger\Logger;
 $config = \Common\Config::getAppConfig('app', ENV);
 
 class ProcessMonitor {
@@ -11,11 +13,12 @@ class ProcessMonitor {
      * @var ProcessMonitor
      */
     private static $instance = null;
+
     /**
-     * @var \Common\Logger\Logger
+     * @var Logger
      */
-    private static $logger = null;
-    
+    private $logger = null;
+    protected $sleep_time = 5;
     
     /**
      * @return ProcessMonitor
@@ -23,13 +26,39 @@ class ProcessMonitor {
     public static function instance() {
         if (self::$instance == null) {
             self::$instance = new ProcessMonitor();
-            self::$logger = new \Common\Logger\Logger();
+
+            
+            
+            $fileLogger = new File();
+            $fileLogger->initWithConfig(array('log_level'=>1, 'log_file'=>'process_monitor'));
+            Logger::logger()->addLogger($fileLogger);
+
+            
+            $consoleLogger = new Console();
+            $consoleLogger->initWithConfig(array('log_level'=>1));
+            Logger::logger()->addLogger($consoleLogger);
+
+            self::$instance->logger = Logger::logger();
+            
         }        
         return self::$instance;
     }
     
     private function __construct() {
-        
+    }
+    
+    public function run() {
+        while(true) {
+            try{
+                $this->start('all');
+            }catch (Exception $e) {
+                $this->logger->error('===============error start==============');
+                $this->logger->error($e->getMessage());
+                $this->logger->error($e->getTraceAsString());
+                $this->logger->error('===============error end==============');
+            }
+            sleep($this->sleep_time);
+        }
     }
     
     //运行单个进程
@@ -42,7 +71,7 @@ class ProcessMonitor {
         }else if(isset($configs[$process])){
             $this->startProcess($process, $configs[$process]);
         }else{
-            self::$logger->error("Uknown process {$process}");
+            $this->logger->error("Uknown process {$process}");
         }
     }
 
@@ -56,7 +85,7 @@ class ProcessMonitor {
         }else if(isset($configs[$process])){
             $this->stopProcess($process, $configs[$process]);
         }else{
-            self::$logger->error("Uknown process {$process}");
+            $this->logger->error("Uknown process {$process}");
         }
     }
 
@@ -74,7 +103,7 @@ class ProcessMonitor {
         }else if(isset($configs[$process])){
             $this->checkStatus($process, $configs[$process]);
         }else{
-            self::$logger->error("Uknown process {$process}");
+            $this->logger->error("Uknown process {$process}");
         }
     }
 
@@ -85,11 +114,11 @@ class ProcessMonitor {
             $cmd = $this->getStartCmd($configs['proc_uri'], $i);
             $pid = $this->getPids($cmd);
             if ($pid) {
-                self::$logger->info("Process [{$name}:{$i} pid:{$pid}] running.");
+                $this->logger->info("Process [{$name}:{$i} pid:{$pid}] running.");
             }else if($this->shouldRunProcess($name, $configs)){
-                self::$logger->error("Process [{$name}:{$i} ] stopped !!!");
+                $this->logger->error("Process [{$name}:{$i} ] stopped !!!");
             }else{
-                self::$logger->info("Process [{$name}:{$i} ] not running.");
+                $this->logger->info("Process [{$name}:{$i} ] not running.");
             }
         }
     }
@@ -112,31 +141,31 @@ class ProcessMonitor {
             $cmd = $this->getStartCmd($configs['proc_uri'], $i);
             $pids = $this->getPids($cmd);
             if (!$pids) {
-                self::$logger->info("Process [{$name}:{$i}] not running.");
+                $this->logger->info("Process [{$name}:{$i}] not running.");
                 continue;
             }
             $pids = explode(",", $pids);
             foreach($pids as $pid) {
                 $pid = trim($pid);
                 $pid && \Common\Util\Tool::execCmd("kill {$pid}");
-                self::$logger->info("Process [{$name}:{$i} pid:{$pid}] stopped.");
+                $this->logger->info("Process [{$name}:{$i} pid:{$pid}] stopped.");
             }
         }
     }
     
     public function shouldRunProcess($name, $configs) {
         if (empty($configs['proc_uri'])) {
-            self::$logger->error(" Config error. No 'proc_uri' found for process [{$name}].");
+            $this->logger->error(" Config error. No 'proc_uri' found for process [{$name}].");
             return false;
         }
 
         if(isset($configs['run_time']) && !$this->timeToRun(time(), $configs['run_time'])) {
-            self::$logger->info("Ignore [$name]. Not a proper time.");
+            $this->logger->info("Ignore [$name]. Not a proper time.");
             return false;
         }
 
         if(!$this->isAllowIp($configs)) {
-            self::$logger->info("Ignore [$name]. Not allowed ip.");
+            $this->logger->info("Ignore [$name]. Not allowed ip.");
             return false;
         }
         return true;
@@ -151,11 +180,11 @@ class ProcessMonitor {
         for ($i = 1; $i<=$proc_num; $i++) {
             $cmd = $this->getStartCmd($configs['proc_uri'], $i);
             if ($this->getPids($cmd)) {
-                self::$logger->info("Process [{$name}:{$i}] already running.");
+                $this->logger->info("Process [{$name}:{$i}] already running.");
                 continue;
             }
             \Common\Util\Tool::execCmd("nohup {$cmd} > /dev/null &");
-            self::$logger->info("Process [{$name}:{$i}] start ok.");
+            $this->logger->info("Process [{$name}:{$i}] start ok.");
         }
         return true;
     }
@@ -310,14 +339,14 @@ function checkParams($argv, $params) {
         if(!isset($argv[2])) {
             return false;
         }
-        case '--status':
+        case '--start':
+        case '--run':
             break;
     }
     
     return true;
 }
 
-$logger = new \Common\Logger\Logger();
 
 if(count($argv) < 2) {
     $mgr->printHelp();
@@ -336,6 +365,9 @@ if(count($argv) < 2) {
     }
     
     switch($argv[1]) {
+        case '--run':
+            $mgr->run();
+            break;
         case '--start':
             $mgr->start($params['start']);
            break;

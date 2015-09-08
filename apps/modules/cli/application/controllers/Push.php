@@ -10,7 +10,6 @@ class PushController extends \Http\Controller\Cli{
     }
 
     public function sendAction(){
-        var_dump($this->configs);
         $cnt = 0;
         while(true) {
             for($i=0; $i< $this->stepCount; $i++){
@@ -18,7 +17,7 @@ class PushController extends \Http\Controller\Cli{
             }
             $cnt +=$this->stepCount;
             $this->logger->info("Count:$cnt");
-            sleep($this->sleepTime);
+            sleep(0.5);
         }
     }
 

@@ -8,15 +8,11 @@
 class MainPlugin extends Yaf_Plugin_Abstract {
 
     public function dispatchLoopStartup(Yaf_Request_Abstract $request, Yaf_Response_Abstract $response) {
-//        printf("ModuelName:%s actionName:%s controllerName:%s requestUri:%s\n",
-//            $request->getModuleName(),
-//            $request->getActionName(), 
-//            $request->getControllerName(), 
-//            $request->getRequestUri());
-        
         if (!$request->isCli()){
             throw new Yaf_Exception("Forbidden!!");
         }
+
+        ;
     }
 
 }

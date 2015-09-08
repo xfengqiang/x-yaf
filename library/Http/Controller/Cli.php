@@ -9,14 +9,11 @@
 namespace Http\Controller;
 
 use Common\Config;
+use Common\Logger\Console;
+use Common\Logger\File;
 use Common\Logger\Logger;
 
 class Cli extends Base{
-
-    /**
-     * @var \Common\Logger\Logger
-     */
-    public $logger;
     
     protected $taskId; //当前task的taskId
     protected $taskName; //当前task的标识
@@ -26,6 +23,10 @@ class Cli extends Base{
     protected $sleepTime = 1; //如果是常驻任务，每次循环结束后，可以
     
     protected $configs;
+    /**
+     * @var Logger
+     */
+    protected $logger;
     
     public function init() {
         parent::init();
@@ -39,7 +40,13 @@ class Cli extends Base{
         isset($taskConfig['sleep_time']) && $this->sleepTime = $taskConfig['sleep_time'];
         isset($taskConfig['task_name']) && $this->taskName = $taskConfig['task_name'];
 
-        $this->logger = new Logger($this->taskName.'.'.$this->taskId);
+        $fileLogger = new File();
+        $fileLogger->log_base_dir = APPLICATION_PATH.'/logs/cli';
+        $fileLogger->log_file = $this->taskName.'.'.$this->taskId.'.log';
+        $fileLogger->log_level = Config::getAppConfig('app', ENV.'.logger.file.log_level');
+        Logger::logger()->addLogger($fileLogger);
+            
+        $this->logger = Logger::logger();
         
         if ($this->timeLimit) {
             set_time_limit($this->timeLimit);
