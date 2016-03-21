@@ -5,7 +5,7 @@
  * @Autor: fengqiang <fengqiang1@staff.sina.com.cn>
  * @Date: 2014-11-02 15:34
  */
-class Aj_AccountController extends  Abstract_Controller_Aj{
+class Aj_AccountController extends  \Http\Controller\Api{
     public function loginAction(){
         $name = $this->getPost('str', true, 'username');
         $password = $this->getPost('str', true, 'password');

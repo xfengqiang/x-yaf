@@ -6,7 +6,7 @@
  */
 use apps\web\services\Test;
 use apps\common\models\User;
-class DemoController extends \Http\Controller\Web {
+class DemoController extends \Http\Controller\Base {
     public function init(){
         parent::init();
         
@@ -26,7 +26,8 @@ class DemoController extends \Http\Controller\Web {
     public function configAction(){
         $this->disableView();
         $ret = \Common\Config::getAppConfig('app', 'common.site');
-        echo json_encode($ret);
+        var_dump($ret);
+        var_dump(\apps\common\App::getEnv());
     }
 
     /**

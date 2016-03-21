@@ -5,7 +5,7 @@
  * @desc 默认控制器
  * @see http://www.php.net/manual/en/class.yaf-controller-abstract.php
  */
-class AccountController extends \Http\Controller\Web {
+class AccountController extends \Http\Controller\Base {
     public function loginAction(){
     }
     public function registerAction(){
@@ -16,6 +16,11 @@ class AccountController extends \Http\Controller\Web {
         $id = $this->requiredParams(['id']);
         echo "hello {$id['id']}";
     }
+    public function vcodeAction() {
+        $this->disableView();
+        echo \Common\Util\VerifyCode::createCode();
+    }
+    
     public function logoutAction(){
         Yaf_Session::getInstance()->del('username');
         $this->redirect('/account/login');

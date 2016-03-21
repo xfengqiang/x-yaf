@@ -23,7 +23,7 @@ class PushController extends \Http\Controller\Cli{
 
     public function lockAction() {
 //        \Common\Mysql\DbCache::RegisterDb('lockdb', ['host'=>'127.0.0.1', 'port'=>3600, 'dbname'=>'xwk', 'user'=>'root', 'password'=>'z']);
-        $db = new \Common\Mysql\Db('lockdb');
+        $db = new \Common\Mysql\Db('user_db');
         $lock = new Common\Lock\DbLock($db);
         $lock_key = $this->taskName;
         if($lock->lock($lock_key)) {

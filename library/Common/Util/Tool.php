@@ -8,8 +8,9 @@
 
 namespace Common\Util;
 
-class Tool {
 
+class Tool {
+    private static $cache = array(); 
     /**
      * 判断php宿主环境是否是64bit
      *
@@ -173,17 +174,20 @@ class Tool {
 	 * 获得服务器本地ip
 	 */
     static public function getServerIp() {
-        if(isset($_SERVER['SERVER_ADDR'])) {
-            return $_SERVER['SERVER_ADDR'];
+//        if(isset($_SERVER['SERVER_ADDR'])) {
+//            return $_SERVER['SERVER_ADDR'];
+//        }
+        if(!isset(self::$cache['server_ip'])) {
+            $exec = " /sbin/ifconfig | grep 'inet '|grep -v '127.0.0.1' | head -1 | awk '{print $2}'";
+            $ip = trim(self::execute($exec));
+            if (!preg_match('/^[0-9\.]+$/', $ip)) {
+                $ip = $_SERVER['SERVER_ADDR'];
+            }
+            self::$cache['server_ip'] = $ip;
         }
-
-        $exec = "/sbin/ifconfig | grep 'inet addr' | awk '{ print $2 }' | awk -F ':' '{ print $2}' | head -1";
-        $ip = trim(Comm_Util::execute($exec));
-        if (preg_match('/^[0-9\.]+$/', $ip)) {
-            return $ip;
-        } else {
-            return '60.28.175.24';
-        }
+       
+        return self::$cache['server_ip'];
+       
     }
 
     /**

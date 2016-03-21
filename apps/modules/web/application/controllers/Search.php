@@ -4,7 +4,7 @@
  * @Autor: frank
  * @Date: 2015-08-12 20:55
  */
-class SearchController extends \Http\Controller\Web {
+class SearchController extends \Http\Controller\Base {
     public function actorAction() {
         $this->disableView();
        

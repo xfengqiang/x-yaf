@@ -1,6 +1,6 @@
 <?php
 /**
- * 
+ *
  * @Autor: frank
  * @Date: 2015-05-24 13:48
  */
@@ -22,28 +22,60 @@ require APPLICATION_PATH.'/library/XAutoLoader.php';
 
 
 class App  {
+    static $env = null;
+    static $register = array();
     static public function init($modulePath) {
         \XAutoLoader::RegisterAutoLoader(APPLICATION_PATH);
-        Config::init( APPLICATION_PATH . '/apps/config', $modulePath.'/config', self::getEnv());
-        define('ENV', self::getEnv());
+        Config::init( APPLICATION_PATH . '/apps/config', $modulePath.'/config');
+        self::getEnv();
         self::initDb();
     }
-    
+
     static public function initDb() {
-        $master_dbs = Config::getCommonConfig('global', 'db_master', []);
-        foreach($master_dbs as $name=>$config) {
-            DbCache::RegisterDb($name, $config, true);
-        }
-        $master_dbs = Config::getCommonConfig('global', 'db_slave', []);
-        foreach($master_dbs as $name=>$config) {
-            DbCache::RegisterDb($name, $config, false);
+        $env = self::getEnv();
+        $dbConfigs = Config::getCommonConfig('db', $env);
+        foreach($dbConfigs as $name=>$configs){
+            if(isset($configs['master'])){
+                foreach($configs as $type=>$config){
+                    DbCache::RegisterDb($name, $config, $type=='master');
+                }
+            }else{
+                DbCache::RegisterDb($name, $configs, true);
+            }
         }
     }
+
     static public function finish(){
         Logger::logger()->flush();
     }
-    
+
     static public function getEnv (){
-        return 'dev';
+        if(self::$env==''){
+            $ipConfig = \Common\Config::getCommonConfig('global', 'env_ips');
+            $serverIp = \Common\Util\Tool::getServerIp();
+            foreach($ipConfig as $env=>$ips){
+                if(strpos($ips, $serverIp)!==false){
+                    self::$env = $env;
+                    break;
+                }
+            }
+            if(empty(self::$env)) {
+                self::$env = 'dev';
+            }
+            !defined('ENV') && define('ENV', self::$env);
+        }
+
+        return self::$env;
+    }
+    static public function setParam($key, $v){
+        self::$register[$key] = $v;
+    }
+
+    /**
+     * @param $key
+     * @return null|mixed
+     */
+    static public function getParam($key) {
+        return isset(self::$register[$key]) ? self::$register[$key] : null;
     }
 } 

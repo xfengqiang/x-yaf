@@ -7,7 +7,7 @@
  */
 
 
-class IndexController extends \Http\Controller\Web {
+class IndexController extends \Http\Controller\Base {
     
     /** 
      * 默认动作
