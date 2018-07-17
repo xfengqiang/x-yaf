@@ -357,7 +357,7 @@ class Rule {
      * @return string
      */
     public function errMsg() {
-        $this->errMsgForType($this->errType);
+        return $this->errMsgForType($this->errType);
     }
 
     /**
