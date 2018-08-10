@@ -207,7 +207,6 @@ class Tool {
      *
      * @return int
      *
-     * @author chengxuan <chengxuan@staff.sina.com.cn>
      */
     static public function netWrite($fp, $content) {
         $length = strlen($content);
